@@ -37,3 +37,50 @@ class PacketHeader(LittleEndianStructure):
         ("player_car_index", c_uint8),
         ("secondary_player_car_index", c_uint8),
     ]
+
+
+class CarTelemetryData(PacketHeader):
+    """
+    A class representing the CarTelemtry Data packet
+
+    This packet details telemetry for all the cars in the race.
+    It details various values that would be recorded on the car such as speed, throttle application, DRS etc.
+    Note that the rev light configurations are presented separately as well and will mimic real life driver preferences.
+
+    Attributes:
+        speed (int): Speed of the car in kilometres per hour
+        throttle (float): Amount of throttle applied (0.0 to 1.0)
+        steer (float): Steering (-1.0 (full lock left) to 1.0 (full lock right))
+        brake (float): Amount of brake applied (0.0 to 1.0)
+        clutch (int): Amount of clutch applied (0 to 100)
+        gear (int): Gear selected (1-8, N=0, R=-1)
+        engine_rpm (int): Engine RPM
+        drs (int): 0 = off, 1 = on
+        rev_lights_percent (int): Rev lights indicator (percentage)
+        rev_lights_bit_value (int): Rev lights (bit 0 = leftmost LED, bit 14 = rightmost LED)
+        brakes_temperature[4] (int): Brakes temperature (celsius)
+        tyres_surface_temperature[4] (int): Tyres surface temperature (celsius)
+        tyres_inner_temperature[4] (int): Tyres inner temperature (celsius)
+        engine_temperature (int): Engine temperature (celsius)
+        tyres_pressure[4] (float): Tyres pressure (PSI)
+        surface_type[4] (int:) Driving surface, see appendices
+    """
+
+    _fields_ = [
+        ("speed", c_uint16),
+        ("throttle", c_float),
+        ("steer", c_float),
+        ("brake", c_float),
+        ("clutch", c_uint8),
+        ("gear", c_int8),
+        ("engine_rpm", c_uint16),
+        ("drs", c_uint8),
+        ("rev_lights_percent", c_uint8),
+        ("rev_lights_bit_value", c_uint16),
+        ("brakes_temperature", c_uint16 * 4),
+        ("tyres_surface_temperature", c_uint8 * 4),
+        ("tyres_inner_temperature", c_uint8 * 4),
+        ("engine_temperature", c_uint16),
+        ("tyres_pressure", c_float * 4),
+        ("surface_type", c_uint8 * 4),
+    ]
