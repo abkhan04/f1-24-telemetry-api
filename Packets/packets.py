@@ -2,7 +2,12 @@ from ctypes import LittleEndianStructure, Union
 from ctypes import c_uint8, c_int8, c_uint16, c_int16, c_uint32, c_float, c_double, c_uint64, c_char 
 
 
-class PacketHeader(LittleEndianStructure):
+class Packet(LittleEndianStructure):
+
+    _pack_ = 1
+
+
+class PacketHeader(Packet):
     """
     A class representing the base structure for packet headers
 
@@ -21,8 +26,6 @@ class PacketHeader(LittleEndianStructure):
         secondary_player_car_index (int): Index of secondary player's car in the array (splitscreen), 255 if no second player
     """
 
-    _pack_ = 1
-
     _fields_ = [
         ("packet_format", c_int16),
         ("game_year", c_uint8),
@@ -39,9 +42,9 @@ class PacketHeader(LittleEndianStructure):
     ]
 
 
-class CarTelemetryData(PacketHeader):
+class CarTelemetryData(Packet):
     """
-    A class representing the CarTelemtry Data packet
+    A class representing the CarTelemetryData packet
 
     This packet details telemetry for all the cars in the race.
     It details various values that would be recorded on the car such as speed, throttle application, DRS etc.
@@ -83,4 +86,31 @@ class CarTelemetryData(PacketHeader):
         ("engine_temperature", c_uint16),
         ("tyres_pressure", c_float * 4),
         ("surface_type", c_uint8 * 4),
+    ]
+
+
+class PacketCarTelemetryData(Packet):
+    """
+    A class representing the CarTelemetryData packet for all cars in a race
+
+    This packet details telemetry for all cars in the race.
+    It details the mfd panel index and the suggested gear.
+
+    Attributes:
+        packet_header (PacketHeader): Header
+        car_telemetry_data[22] (CarTelemetryData): CarTelemetryData
+        mfd_panel_index (int): Index of MFD panel open - 255 = MFD closed
+                               Single player, race - 0 = Car setup, 1 = Pits
+                               2 = Damage, 3 =  Engine, 4 = Temperatures
+                               May vary depending on game mode
+        mfd_panel_index_secondary_player (int): See above
+        suggested_gear (int): Suggested gear for the player (1-8), 0 if no gear suggested
+    """
+
+    _fields_ = [
+        ("packet_header", PacketHeader),
+        ("car_telemetry_data", CarTelemetryData * 22),
+        ("mfd_panel_index", c_uint8),
+        ("mfd_panel_index_secondary_player", c_uint8),
+        ("suggested_gear", c_int8),
     ]
