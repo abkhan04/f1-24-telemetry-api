@@ -4,3 +4,7 @@ An API designed to be show user telemetry from the F1 24 game
 ## Run the server
 
 `uvicorn main:app --reload`
+
+## Install dependencies
+
+`pip install -r requirements.txt`
