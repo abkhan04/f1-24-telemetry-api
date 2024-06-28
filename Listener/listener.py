@@ -3,7 +3,7 @@ import socket
 
 
 class Listener:
-    def __init__(self, ip_address, port) -> None:
+    def __init__(self, ip_address='127.0.0.1', port='5005') -> None:
         self.ip_address = ip_address
         self.port = port
 
@@ -13,7 +13,7 @@ class Listener:
         self.socket.bind((self.ip_address, self.port))
 
 
-    def listener(self) -> PacketCarTelemetryData:
+    def listen(self) -> PacketCarTelemetryData:
         # Receive the packet
         packet = self.socket.recv(2048)
 
