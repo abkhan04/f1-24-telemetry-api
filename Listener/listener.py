@@ -1,4 +1,4 @@
-from packets import packets
+from packets.packets import PacketHeader, PacketCarTelemetryData
 import socket
 
 
@@ -13,13 +13,17 @@ class Listener:
         self.socket.bind((self.ip_address, self.port))
 
 
-    def listener(self):
+    def listener(self) -> PacketCarTelemetryData:
         # Receive the packet
         packet = self.socket.recv(2048)
 
         # Create PacketHeader class
-        header = packets.PacketHeader.from_buffer_copy(packet)
+        header = PacketHeader.from_buffer_copy(packet)
 
-        # If the packet_id is 6, then create a PacketCarTelemetryData class
-        if header.packet_id == 6:
-            return packets.PacketCarTelemetryData.from_buffer_copy(packet)
+        # Loop until the packet_id is 6
+        while (header.packet_id != 6):
+            packet = self.socket.recv(2048)
+            header = PacketHeader.from_buffer_copy(packet)
+
+        # Create a PacketCarTelemetryData class
+        return PacketCarTelemetryData.from_buffer_copy(packet)
