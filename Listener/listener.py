@@ -3,7 +3,7 @@ import socket
 
 
 class Listener:
-    def __init__(self, ip_address='127.0.0.1', port='5005') -> None:
+    def __init__(self, ip_address: str = '127.0.0.1', port: int = 5005) -> None:
         self.ip_address = ip_address
         self.port = port
 
